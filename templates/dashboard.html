@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}AEGIS Dashboard{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card bg-dark">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">System Overview</h5>
+                <button id="refreshDashboard" class="btn btn-sm btn-outline-info">
+                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-body text-center">
+                                <h3 class="text-info" id="deviceCount">--</h3>
+                                <p class="text-secondary mb-0">Devices Monitored</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-body text-center">
+                                <h3 class="text-warning" id="anomalyCount">--</h3>
+                                <p class="text-secondary mb-0">Anomalies Detected</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-body text-center">
+                                <h3 class="text-danger" id="malwareCount">--</h3>
+                                <p class="text-secondary mb-0">Potential Malware</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-7">
+        <div class="card bg-dark">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Sensor Data Trends</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="sensorChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="card bg-dark">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Anomaly Distribution</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="anomalyChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card bg-dark">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Recent Anomalies</h5>
+                <div>
+                    <select id="anomalyFilter" class="form-select form-select-sm">
+                        <option value="all">All Devices</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Device ID</th>
+                                <th>Temperature</th>
+                                <th>Pressure</th>
+                                <th>RPM</th>
+                                <th>Anomaly Score</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="anomalyTable">
+                            <tr>
+                                <td colspan="7" class="text-center">Loading data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,5 @@
+[2025-04-11 13:39:35] ANOMALY DETECTED: Device device-001, Score: -0.3470, Data: temperature=76.2, pressure=98.7, rpm=3020
+[2025-04-11 13:40:03] ANOMALY DETECTED: Device device-001, Score: -0.3470, Data: temperature=76.2, pressure=98.7, rpm=3020
+[2025-04-11 13:40:21] ANOMALY DETECTED: Device device-001, Score: -0.7047, Data: temperature=120.5, pressure=150.2, rpm=5500
+[2025-04-11 13:56:35] ANOMALY DETECTED: Device sensor001, Score: -0.6861, Data: temperature=125.7, pressure=85.1, rpm=3950
+[2025-04-11 13:57:33] ANOMALY DETECTED: Device sensor001, Score: -0.6861, Data: temperature=125.7, pressure=85.1, rpm=3950

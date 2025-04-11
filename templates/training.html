@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}AEGIS Model Training{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card bg-dark">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Model Training</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <p>Train the anomaly detection model with either synthetic data or uploaded custom data.</p>
+                </div>
+                
+                <ul class="nav nav-tabs mb-3" id="trainingTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="synthetic-tab" data-bs-toggle="tab" data-bs-target="#synthetic" type="button" 
+                                role="tab" aria-controls="synthetic" aria-selected="true">Synthetic Data</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload" type="button" 
+                                role="tab" aria-controls="upload" aria-selected="false">Upload Data</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="custom-tab" data-bs-toggle="tab" data-bs-target="#custom" type="button" 
+                                role="tab" aria-controls="custom" aria-selected="false">Custom Parameters</button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content" id="trainingTabsContent">
+                    <div class="tab-pane fade show active" id="synthetic" role="tabpanel" aria-labelledby="synthetic-tab">
+                        <div class="mb-3">
+                            <label for="syntheticSampleCount" class="form-label">Number of Samples</label>
+                            <input type="number" class="form-control" id="syntheticSampleCount" value="5000" min="1000" max="50000">
+                            <div class="form-text">Number of data points to generate (1,000 - 50,000).</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="syntheticContamination" class="form-label">Contamination Rate</label>
+                            <input type="number" class="form-control" id="syntheticContamination" value="0.1" min="0.01" max="0.5" step="0.01">
+                            <div class="form-text">Percentage of anomalous data (0.01 - 0.5).</div>
+                        </div>
+                        <button id="trainSyntheticBtn" class="btn btn-primary">Train with Synthetic Data</button>
+                    </div>
+                    
+                    <div class="tab-pane fade" id="upload" role="tabpanel" aria-labelledby="upload-tab">
+                        <div class="mb-3">
+                            <label for="dataFile" class="form-label">CSV Data File</label>
+                            <input type="file" class="form-control" id="dataFile" accept=".csv">
+                            <div class="form-text">Upload a CSV file with columns: temperature, pressure, rpm.</div>
+                        </div>
+                        <button id="uploadDataBtn" class="btn btn-primary">Upload and Train</button>
+                    </div>
+                    
+                    <div class="tab-pane fade" id="custom" role="tabpanel" aria-labelledby="custom-tab">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="mb-3">Normal Data Parameters</h6>
+                                <div class="mb-2">
+                                    <label for="normalTemp" class="form-label">Temperature (°C)</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="normalTemp" value="75" placeholder="Mean">
+                                        <input type="number" class="form-control" id="normalTempVar" value="5" placeholder="Variance">
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <label for="normalPressure" class="form-label">Pressure (kPa)</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="normalPressure" value="100" placeholder="Mean">
+                                        <input type="number" class="form-control" id="normalPressureVar" value="10" placeholder="Variance">
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <label for="normalRPM" class="form-label">RPM</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="normalRPM" value="3000" placeholder="Mean">
+                                        <input type="number" class="form-control" id="normalRPMVar" value="200" placeholder="Variance">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="mb-3">Anomaly Parameters</h6>
+                                <div class="mb-3">
+                                    <label for="anomalySampleCount" class="form-label">Number of Samples</label>
+                                    <input type="number" class="form-control" id="anomalySampleCount" value="5000" min="1000" max="50000">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="anomalyContamination" class="form-label">Contamination Rate</label>
+                                    <input type="number" class="form-control" id="anomalyContamination" value="0.1" min="0.01" max="0.5" step="0.01">
+                                </div>
+                            </div>
+                        </div>
+                        <button id="trainCustomBtn" class="btn btn-primary mt-3">Train with Custom Parameters</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card bg-dark">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Training Results</h5>
+            </div>
+            <div class="card-body">
+                <div id="trainingResults" class="p-3 rounded bg-dark">
+                    <div class="text-center text-secondary">No training results available</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/training.js') }}"></script>
+{% endblock %}

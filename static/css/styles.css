@@ -1,0 +1,59 @@
+/* Custom styling for AEGIS */
+
+/* Enhance card borders and shadows */
+.card {
+    border: 1px solid rgba(50, 50, 50, 0.5);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-bottom: 1.5rem;
+}
+
+/* Custom navbar styling */
+.navbar-brand {
+    font-weight: bold;
+    letter-spacing: 0.05rem;
+}
+
+/* Footer styling */
+.footer {
+    border-top: 1px solid rgba(50, 50, 50, 0.5);
+    padding-top: 1rem;
+}
+
+/* Status indicators */
+.status-normal {
+    color: var(--bs-success);
+}
+
+.status-warning {
+    color: var(--bs-warning);
+}
+
+.status-danger {
+    color: var(--bs-danger);
+}
+
+/* Alert log styling */
+#alertLogs {
+    background-color: rgba(30, 30, 30, 0.5);
+    line-height: 1.5;
+}
+
+#alertLogs .alert-entry {
+    padding: 0.25rem 0;
+    border-bottom: 1px solid rgba(50, 50, 50, 0.5);
+}
+
+/* Table styling */
+.table-dark {
+    background-color: rgba(33, 37, 41, 0.8);
+}
+
+.table-dark th {
+    background-color: rgba(25, 25, 25, 0.8);
+    font-weight: 600;
+}
+
+/* Add some spacing to the page */
+body {
+    padding-bottom: 2rem;
+}

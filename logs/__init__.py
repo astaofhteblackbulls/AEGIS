@@ -1,0 +1,1 @@
+"""Logs directory for AEGIS data and alerts."""

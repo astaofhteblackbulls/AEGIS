@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+
+{% block title %}AEGIS Devices{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card bg-dark">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Monitored Devices</h5>
+                <button id="refreshDevices" class="btn btn-sm btn-outline-info">
+                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover">
+                        <thead>
+                            <tr>
+                                <th>Device ID</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Last Seen</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="devicesTable">
+                            {% if devices %}
+                                {% for device in devices %}
+                                <tr>
+                                    <td>{{ device.device_id }}</td>
+                                    <td>{{ device.name or 'Unnamed Device' }}</td>
+                                    <td>{{ device.description or 'No description' }}</td>
+                                    <td>
+                                        {% if device.status == 'active' %}
+                                        <span class="badge bg-success">Active</span>
+                                        {% elif device.status == 'inactive' %}
+                                        <span class="badge bg-secondary">Inactive</span>
+                                        {% elif device.status == 'compromised' %}
+                                        <span class="badge bg-danger">Compromised</span>
+                                        {% else %}
+                                        <span class="badge bg-warning">{{ device.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if device.last_seen %}
+                                        {{ device.last_seen.strftime('%Y-%m-%d %H:%M:%S') }}
+                                        {% else %}
+                                        Never
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-info edit-device" data-device-id="{{ device.device_id }}">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-primary view-device-data" data-device-id="{{ device.device_id }}">
+                                            <i class="bi bi-graph-up"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center">Loading devices...</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Device Statistics -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card bg-dark">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Device Statistics</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-body text-center">
+                                <h3 class="text-info" id="totalDeviceCount">{{ devices|length if devices else 0 }}</h3>
+                                <p class="text-secondary mb-0">Total Devices</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-body text-center">
+                                <h3 class="text-success" id="activeDeviceCount">
+                                    {% if devices %}
+                                        {{ devices|selectattr('status', 'equalto', 'active')|list|length }}
+                                    {% else %}
+                                        0
+                                    {% endif %}
+                                </h3>
+                                <p class="text-secondary mb-0">Active</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-body text-center">
+                                <h3 class="text-secondary" id="inactiveDeviceCount">
+                                    {% if devices %}
+                                        {{ devices|selectattr('status', 'equalto', 'inactive')|list|length }}
+                                    {% else %}
+                                        0
+                                    {% endif %}
+                                </h3>
+                                <p class="text-secondary mb-0">Inactive</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-body text-center">
+                                <h3 class="text-danger" id="compromisedDeviceCount">
+                                    {% if devices %}
+                                        {{ devices|selectattr('status', 'equalto', 'compromised')|list|length }}
+                                    {% else %}
+                                        0
+                                    {% endif %}
+                                </h3>
+                                <p class="text-secondary mb-0">Compromised</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Device Modal -->
+<div class="modal fade" id="editDeviceModal" tabindex="-1" aria-labelledby="editDeviceModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editDeviceModalLabel">Edit Device</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editDeviceForm">
+                    <input type="hidden" id="editDeviceId">
+                    <div class="mb-3">
+                        <label for="editDeviceName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="editDeviceName">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDeviceDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="editDeviceDescription" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDeviceStatus" class="form-label">Status</label>
+                        <select class="form-select" id="editDeviceStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="compromised">Compromised</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveDeviceButton">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- View Device Data Modal -->
+<div class="modal fade" id="viewDeviceDataModal" tabindex="-1" aria-labelledby="viewDeviceDataModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewDeviceDataModalLabel">Device Data</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <canvas id="deviceSensorChart"></canvas>
+                </div>
+                <h6>Recent Data Points</h6>
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Temperature</th>
+                                <th>Pressure</th>
+                                <th>RPM</th>
+                                <th>Anomaly</th>
+                            </tr>
+                        </thead>
+                        <tbody id="deviceDataTable">
+                            <tr>
+                                <td colspan="5" class="text-center">Loading data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/devices.js') }}"></script>
+{% endblock %}

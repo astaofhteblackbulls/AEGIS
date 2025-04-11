@@ -1,0 +1,3 @@
+timestamp,device_id,temperature,pressure,rpm,received_at
+2025-04-11T13:40:00Z,device-001,78.5,102.1,3050,1744378769
+sensor001,2025-04-11T13:00:00Z,75.2,102.3,2950,1744379789
